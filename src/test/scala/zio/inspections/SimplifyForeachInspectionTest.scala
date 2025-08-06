@@ -45,7 +45,6 @@ abstract class SimplifyForeachInspectionTest[S <: ZInspection: ClassTag](
        |      } yield ()
        |  }""".stripMargin
 
-
   override protected val hint: String = s"Replace with ZIO.$methodToReplaceWith"
 
   override protected def isZIO1: Boolean = isZIO1Test

@@ -17,7 +17,7 @@ abstract class IvyManagedLoaderBase extends LibraryLoader {
   protected def cache: mutable.Map[Seq[DependencyDescription], Seq[ResolvedDependency]]
 
   override def init(implicit module: Module, version: ScalaVersion): Unit = {
-    val deps = dependencies(version)
+    val deps     = dependencies(version)
     val resolved = cache.getOrElseUpdate(deps, dependencyManager.resolve(deps: _*))
     resolved.foreach { resolved =>
       val resolvedFile = resolved.file.toFile
@@ -27,13 +27,16 @@ abstract class IvyManagedLoaderBase extends LibraryLoader {
   }
 }
 
-final class IvyManagedLoader private(
-                                      override protected val dependencyManager: DependencyManagerBase,
-                                      private val _dependencies: DependencyDescription*
-                                    ) extends IvyManagedLoaderBase {
+final class IvyManagedLoader private (
+  override protected val dependencyManager: DependencyManagerBase,
+  private val _dependencies: DependencyDescription*
+) extends IvyManagedLoaderBase {
 
   _dependencies.foreach { it =>
-    require(!(it.kind == Types.SRC && it.isTransitive), "Transitive source dependencies are not supported in Ivy") // https://issues.apache.org/jira/browse/IVY-1003
+    require(
+      !(it.kind == Types.SRC && it.isTransitive),
+      "Transitive source dependencies are not supported in Ivy"
+    ) // https://issues.apache.org/jira/browse/IVY-1003
   }
 
   override protected def cache: mutable.Map[Seq[DependencyDescription], Seq[ResolvedDependency]] =

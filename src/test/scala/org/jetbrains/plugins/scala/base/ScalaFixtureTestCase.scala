@@ -46,7 +46,7 @@ abstract class ScalaFixtureTestCase extends CodeInsightFixtureTestCase[ModuleFix
   private[this] var indexingMode: IndexingMode = IndexingMode.SMART
 
   // SCL-21849
-  protected def getIndexingMode: IndexingMode = indexingMode
+  protected def getIndexingMode: IndexingMode             = indexingMode
   protected def setIndexingMode(mode: IndexingMode): Unit = indexingMode = mode
   //end section: indexing mode setup
 
@@ -60,7 +60,8 @@ abstract class ScalaFixtureTestCase extends CodeInsightFixtureTestCase[ModuleFix
   override def tuneFixture(moduleBuilder: ModuleFixtureBuilder[_]): Unit = {
     super.tuneFixture(moduleBuilder)
 
-    indexingMode = this.findIndexingModeAnnotation()
+    indexingMode = this
+      .findIndexingModeAnnotation()
       .fold(IndexingMode.SMART)(_.mode())
     myFixture = IndexingModeCodeInsightTestFixture.Companion.wrapFixture(myFixture, indexingMode)
   }

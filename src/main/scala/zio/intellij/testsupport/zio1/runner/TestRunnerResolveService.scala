@@ -15,7 +15,7 @@ import TestRunnerResolveService.ResolveError.DownloadError
 import TestRunnerResolveService._
 import zio.intellij.utils.{BackgroundTask, ScalaVersionHack, ZioVersion}
 
-import java.net.{URL, URLClassLoader}
+import java.net.{URI, URL, URLClassLoader}
 import java.util.concurrent.ConcurrentHashMap
 import scala.beans.BeanProperty
 import scala.collection.mutable
@@ -52,7 +52,7 @@ private[testsupport] final class TestRunnerResolveService
     case _ =>
       val key = s"${version.toString}###${scalaVersion.versionStr}"
       if (state.resolvedVersions.containsKey(key)) {
-        val jarUrls = state.resolvedVersions.get(key).map(new URL(_))
+        val jarUrls = state.resolvedVersions.get(key).map(new URI(_).toURL)
         resolveClassPath(version, scalaVersion, jarUrls.toIndexedSeq) match {
           case r @ Right(_)                 => r
           case Left(_) if downloadIfMissing => downloadAndResolve(version, scalaVersion, progressListener)
