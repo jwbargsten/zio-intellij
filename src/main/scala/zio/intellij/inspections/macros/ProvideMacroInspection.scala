@@ -31,22 +31,6 @@ class ProvideMacroInspection extends LocalInspectionTool {
     else if (module.exists(_.isZio2)) visitZIO2ProvideMethods(holder)(element)
   }
 
-  private def visitZIO1ProvideMethods(holder: ProblemsHolder)(element: PsiElement): Unit = element match {
-    case expr @ `.inject`(base, layers @ _*) =>
-      tryBuildProvideZIO1(base, layers).fold(visitIssue(holder, expr), identity)
-    case fullyApplied @ ScMethodCall(partiallyApplied @ `.injectSome`(base, _ @_*), layers) =>
-      tryBuildProvideSomeZIO1(partiallyApplied, base, layers).fold(visitIssue(holder, fullyApplied), identity)
-    case expr @ `.injectShared`(base, layers @ _*) =>
-      tryBuildProvideZIO1(base, layers).fold(visitIssue(holder, expr), identity)
-    case fullyApplied @ ScMethodCall(partiallyApplied @ `.injectSomeShared`(base, _ @_*), layers) =>
-      tryBuildProvideSomeSharedZIO1(partiallyApplied, base, layers).fold(visitIssue(holder, fullyApplied), identity)
-    case fullyApplied @ ScMethodCall(partiallyApplied @ ScGenericCall(`ZLayer.makeLike`(_, _), _), layers) =>
-      tryBuildProvideZIO1(partiallyApplied, layers).fold(visitIssue(holder, fullyApplied), identity)
-    case fullyApplied @ ScMethodCall(partiallyApplied @ ScGenericCall(`ZLayer.makeSomeLike`(_, _), _), layers) =>
-      tryBuildProvideSomeZIO1(fullyApplied, partiallyApplied, layers).fold(visitIssue(holder, fullyApplied), identity)
-    case _ =>
-  }
-
   private def visitZIO2ProvideMethods(holder: ProblemsHolder)(element: PsiElement): Unit = element match {
     case expr @ `.provide`(base, layers @ _*) =>
       tryBuildProvideZIO2(base, layers).fold(visitIssue(holder, expr), identity)
@@ -62,36 +46,6 @@ class ProvideMacroInspection extends LocalInspectionTool {
       tryBuildProvideSomeZIO2(fullyApplied, partiallyApplied, layers).fold(visitIssue(holder, fullyApplied), identity)
     case _ =>
   }
-
-  private def tryBuildProvideZIO1(base: ScExpression, layers: Seq[ScExpression]): Either[ConstructionIssue, Unit] =
-    base match {
-      case Typeable(`ZIO[R, E, A]`(r, _, _)) =>
-        LayerBuilder
-          .tryBuildZIO1(base)(
-            target = split(r),
-            remainder = Nil,
-            providedLayers = layers,
-            method = ProvideMethod.Provide
-          )
-      case Typeable(`zio1.Spec[R, E, T]`(r, _, _)) =>
-        LayerBuilder
-          .tryBuildZIO1(base)(
-            target = split(r),
-            remainder = Nil,
-            providedLayers = layers,
-            method = ProvideMethod.Provide
-          )
-      case Typeable(`ZLayerMake[R]`(r)) =>
-        LayerBuilder
-          .tryBuildZIO1(base)(
-            target = split(r),
-            remainder = Nil,
-            providedLayers = layers,
-            method = ProvideMethod.Provide
-          )
-      case _ =>
-        Right(())
-    }
 
   private def tryBuildProvideZIO2(base: ScExpression, layers: Seq[ScExpression]): Either[ConstructionIssue, Unit] =
     base match {
@@ -118,40 +72,6 @@ class ProvideMacroInspection extends LocalInspectionTool {
             remainder = Nil,
             providedLayers = layers,
             method = ProvideMethod.Provide
-          )
-      case _ =>
-        Right(())
-    }
-
-  private def tryBuildProvideSomeZIO1(
-    expr: ScExpression,       // effectLike.injectSome[Foo]
-    base: ScExpression,       // effectLike
-    layers: Seq[ScExpression] // layer1, layer2
-  ): Either[ConstructionIssue, Unit] =
-    base match {
-      case Typeable(`ZIO[R, E, A]`(r, _, _)) =>
-        LayerBuilder
-          .tryBuildZIO1(expr)(
-            target = split(r),
-            remainder = methodTypeArgs(expr).flatMap(split),
-            providedLayers = layers,
-            method = ProvideMethod.ProvideSome
-          )
-      case Typeable(`zio1.Spec[R, E, T]`(r, _, _)) =>
-        LayerBuilder
-          .tryBuildZIO1(expr)(
-            target = split(r),
-            remainder = methodTypeArgs(expr).flatMap(split),
-            providedLayers = layers,
-            method = ProvideMethod.ProvideSome
-          )
-      case Typeable(`ZLayerMakeSome[R0, R]`(r0, r)) =>
-        LayerBuilder
-          .tryBuildZIO1(expr)(
-            target = split(r),
-            remainder = split(r0),
-            providedLayers = layers,
-            method = ProvideMethod.ProvideSome
           )
       case _ =>
         Right(())
@@ -191,23 +111,6 @@ class ProvideMacroInspection extends LocalInspectionTool {
         Right(())
     }
 
-  private def tryBuildProvideSomeSharedZIO1(
-    expr: ScExpression,       // effectLike.injectSome[Foo]
-    base: ScExpression,       // effectLike
-    layers: Seq[ScExpression] // layer1, layer2
-  ): Either[ConstructionIssue, Unit] =
-    base match {
-      case Typeable(`zio1.Spec[R, E, T]`(r, _, _)) =>
-        LayerBuilder
-          .tryBuildZIO1(expr)(
-            target = split(r),
-            remainder = methodTypeArgs(expr).flatMap(split),
-            providedLayers = layers,
-            method = ProvideMethod.ProvideSomeShared
-          )
-      case _ =>
-        Right(())
-    }
 
   private def tryBuildProvideSomeSharedZIO2(
     expr: ScExpression,       // effectLike.provideSome[Foo]
@@ -447,60 +350,6 @@ final case class LayerBuilder(
 }
 
 object LayerBuilder {
-
-  // version specific: making sure ScType <: Has[_]
-  def tryBuildZIO1(expr: ScExpression)(
-    target: Seq[ScType],
-    remainder: Seq[ScType],
-    providedLayers: Seq[ScExpression],
-    method: ProvideMethod
-  ): Either[ConstructionIssue, Unit] = {
-    implicit val tpContext: TypePresentationContext = expr
-    implicit val pContext: ProjectContext           = expr
-    implicit val scalaFeatures: ScalaFeatures       = expr
-
-    val hasDesignator = createType("_root_.zio.Has", expr)
-
-    def isHasType(tpe: ZType): Boolean =
-      tpe.value match {
-        case ParameterizedType(designator, _) => hasDesignator.exists(_.equiv(designator))
-        case _                                => false
-      }
-
-    // we are not expecting to see non-Has types often in ZIO1 so it's dirty but efficient enough
-    val nonHasTypes = collection.mutable.ListBuffer.empty[ZType]
-
-    def toZType(tpe: ScType): Option[ZType] =
-      ZType(tpe).tap(_.foreach(tpe => if (!isHasType(tpe)) nonHasTypes += tpe))
-
-    def layerToNode(expr: ScExpression): Option[Node] =
-      expr match {
-        case Typeable(`ZLayer[RIn, E, ROut]`(in, _, out)) =>
-          val inputs  = split(in).toList.flatMap(toZType)
-          val outputs = split(out).toList.flatMap(toZType)
-          Some(Node(inputs, outputs, new ZExpr(expr)))
-        case _ => None
-      }
-
-    // do NOT inline
-    // toZType is stateful
-    val target0             = target.toList.flatMap(toZType)
-    val remainder0          = remainder.toList.flatMap(toZType)
-    val providedLayerNodes0 = providedLayers.toList.flatMap(layerToNode)
-
-    if (containsNothingAsRequirement(target, remainder, providedLayerNodes0)) Right(())
-    else if (nonHasTypes.nonEmpty)
-      Left(NonHasTypesError(nonHasTypes.toSet))
-    else
-      LayerBuilder(
-        target0 = target0,
-        remainder = remainder0,
-        providedLayerNodes = providedLayerNodes0,
-        sideEffectNodes = Nil,
-        method = method,
-        typeToLayer = tpe => s"_root_.zio.ZLayer.requires[$tpe]"
-      ).tryBuild
-  }
 
   // version-specific: taking care of Debug and side-effect layers
   def tryBuildZIO2(expr: ScExpression)(

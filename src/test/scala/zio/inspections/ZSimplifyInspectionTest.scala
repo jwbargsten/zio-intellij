@@ -91,7 +91,6 @@ trait ZInspectionTestBase[T <: LocalInspectionTool] { base: ScalaInspectionTestB
 
 object ZInspectionTestBase {
   // https://ant.apache.org/ivy/history/2.3.0/ivyfile/dependency.html#revision
-  val versionPatternZIO1 = "(,2.0[" // matches all versions lower than 2.0
   val versionPatternZIO2 = "[2.0,)" // matches all versions greater or equal to 2.0
 }
 

@@ -15,10 +15,6 @@ final class ZTestRunConfigurationFactory(configurationType: ZTestConfigurationTy
 
   override def id: String = "ZIO Test"
 
-  override def createTemplateConfiguration(project: Project): RunConfiguration =
-    project.modulesWithScala.collectFirst {
-      case module if module.zioVersion.exists(_.requiresTestRunner) =>
-        new Zio1TestRunConfiguration(project, this)
-    }.getOrElse(new Zio2TestRunConfiguration(project, this))
+  override def createTemplateConfiguration(project: Project): RunConfiguration = new Zio2TestRunConfiguration(project, this)
 
 }

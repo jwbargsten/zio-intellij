@@ -1,7 +1,6 @@
 package zio.inspections
 
 import zio.intellij.inspections.ZInspection
-import zio.intellij.inspections.simplifications.SimplifyForeachInspectionZIO1
 import zio.intellij.inspections.simplifications.SimplifyForeachInspectionZIO2
 
 import scala.reflect.ClassTag

@@ -8,19 +8,6 @@ import zio.intellij.utils.StringUtils._
 import zio.intellij.utils.ZioVersion
 import zio.intellij.utils.types.ZioType
 
-class SimplifyForeachInspectionZIO1
-    extends ZInspection(
-      ForeachForCompSimplificationType("foreach_"),
-      ForeachParForCompSimplificationType("foreachPar_"),
-      ForeachParNForCompSimplificationType,
-      ForeachChainSimplificationType("foreach_"),
-      ForeachParChainSimplificationType("foreachPar_"),
-      ForeachParNChainSimplificationType
-    ) {
-  override protected def isAvailable(zioVersion: ZioVersion): Boolean =
-    zioVersion >= ZioVersion.ZIO.`1.0.0` && zioVersion < ZioVersion.ZIO.`2.0.0`
-}
-
 class SimplifyForeachInspectionZIO2
     extends ZInspection(
       ForeachForCompSimplificationType("foreachDiscard"),

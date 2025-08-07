@@ -203,10 +203,6 @@ object TypeCheckUtils {
       )
   }
 
-  object `zio1.Spec[R, E, T]` extends TypeArgs3Extractor {
-    override protected def fromTarget(tpe: ScType): Boolean = fromZioSpec(tpe)
-  }
-
   object `zio2.Spec[R, E]` extends TypeArgs2Extractor {
     override protected def fromTarget(tpe: ScType): Boolean = fromZioSpec(tpe)
   }

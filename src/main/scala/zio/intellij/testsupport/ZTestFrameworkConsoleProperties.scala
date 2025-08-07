@@ -48,14 +48,11 @@ private[zio] class ZTestFrameworkConsoleProperties(configuration: AbstractTestRu
 
   private class ZTestVisitor(underlying: ServiceMessageVisitor, testFramework: AbstractTestFramework)
       extends DefaultServiceMessageVisitor {
-    private val regexFromHellZio1 =
-      raw"\[1m.\[34m([\s\S]*).\[0m.\[0m.*\[31mwas not equal to.*\[1m.\[34m([\s\S]*?).\[0m.\[0m".r
 
     private val regexFromHellZio2 =
       raw"\[1m.\[34m([\s\S]*).\[0m.\[0m.*\[31mwas not equal to.\[0m..\[1m.\[34m([\s\S]*).\[0m.\[0m\s+.\[1m".r
 
     private val regexFromHell = testFramework match {
-      case _: Zio1TestFramework => regexFromHellZio1
       case _: Zio2TestFramework => regexFromHellZio2
     }
 

@@ -18,7 +18,6 @@ import org.jetbrains.plugins.scala.testingSupport.test.CustomTestRunnerBasedStat
 import org.jetbrains.plugins.scala.testingSupport.test._
 import org.jetbrains.plugins.scala.testingSupport.test.testdata.{ClassTestData, TestConfigurationData}
 import zio.intellij.testsupport.ZTestRunConfiguration.ZTestRunnerName
-import zio.intellij.testsupport.zio1.runner.TestRunnerResolveService
 import zio.intellij.utils.ZioVersion.ZIO
 import zio.intellij.utils._
 
@@ -27,10 +26,6 @@ import java.nio.file.Paths
 import scala.collection.mutable.ListBuffer
 import scala.jdk.CollectionConverters._
 
-final class Zio1TestRunConfiguration(project: Project, configurationFactory: ConfigurationFactory)
-    extends ZTestRunConfiguration(project, configurationFactory, "") {
-  override val testFramework: ZTestFramework = TestFramework.EXTENSION_NAME.findExtension(classOf[Zio1TestFramework])
-}
 final class Zio2TestRunConfiguration(project: Project, configurationFactory: ConfigurationFactory)
     extends ZTestRunConfiguration(project, configurationFactory, "") {
   override val testFramework: ZTestFramework = TestFramework.EXTENSION_NAME.findExtension(classOf[Zio2TestFramework])
@@ -76,8 +71,6 @@ sealed abstract class ZTestRunConfiguration(project: Project, configurationFacto
 
   private def resolveTestRunner(module: Module): Option[Seq[URL]] =
     module.zioVersion zip module.scalaVersion match {
-      case Some((zioVersion, scalaVersion)) if zioVersion.requiresTestRunner =>
-        TestRunnerResolveService.instance(module.getProject).resolve(zioVersion, scalaVersion, false).toOption
       case _ => None
     }
 

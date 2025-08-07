@@ -10,13 +10,12 @@ import org.jetbrains.plugins.scala.lang.psi.types.ScType
 import org.jetbrains.plugins.scala.testingSupport.test.AbstractTestFramework
 import zio.intellij.ZioIcon
 import zio.intellij.inspections.isOfClassFrom
-import zio.intellij.testsupport.ZTestFramework.{expandsToTestMethod, ZIO1SpecFQN, ZIO2SpecFQN}
+import zio.intellij.testsupport.ZTestFramework.{expandsToTestMethod, ZIO2SpecFQN}
 import zio.intellij.utils.TypeCheckUtils.zioTestPackage
 
 import javax.swing.Icon
 import scala.annotation.tailrec
 
-final class Zio1TestFramework extends ZTestFramework(ZIO1SpecFQN, "1.x")
 final class Zio2TestFramework extends ZTestFramework(ZIO2SpecFQN, "2.x")
 
 sealed abstract class ZTestFramework(zSpecFqn: String, zioVersion: String) extends AbstractTestFramework {
@@ -87,7 +86,6 @@ sealed abstract class ZTestFramework(zSpecFqn: String, zioVersion: String) exten
 }
 
 object ZTestFramework {
-  val ZIO1SpecFQN = "zio.test.AbstractRunnableSpec"
   val ZIO2SpecFQN = "zio.test.ZIOSpecAbstract"
 
   private[ZTestFramework] val testMethodTypes = Set(

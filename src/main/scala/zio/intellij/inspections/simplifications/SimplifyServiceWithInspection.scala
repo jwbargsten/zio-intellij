@@ -16,7 +16,6 @@ import zio.intellij.utils.types.ZioType
 
 class SimplifyServiceWithInspection
     extends ZInspection(
-      ServiceWithSimplificationTypeZIO1,
       ServiceWithSimplificationTypeZIO2,
       ServiceWithZIOSimplificationTypeZIO2
     ) {
@@ -46,60 +45,11 @@ abstract class ServiceWithSimplificationType extends SimplificationType {
 
 }
 
-object ServiceWithSimplificationTypeZIO1 extends ServiceWithSimplificationType {
-  override def hint: String = "Replace with ZIO.serviceWith"
-
-  private def replacement(
-    zioType: ZioType,
-    expr: ScExpression,
-    ref: ScExpression,
-    typeArg: Option[ScType]
-  )(implicit
-    ctx: TypePresentationContext = TypePresentationContext(expr)
-  ): Option[Simplification] = {
-    val tpe = typeArg.fold("")(t => s"[${t.codeText}]")
-
-    val refText = ref match {
-      case f: ScFunctionExpr => LambdaUtils.lambdaToUnderscore(f).getWrappedText
-      case _                 => ref.getWrappedText
-    }
-
-    val fnCall = refText.replace("_.get.", "_.")
-
-    val replacement = replace(expr)
-      .withText(s"${zioType.name}.serviceWith$tpe$fnCall")
-      .highlightFrom(expr)
-
-    Some(replacement)
-  }
-
-  override def getSimplification(expr: ScExpression): Option[Simplification] = None
-
-  object InvokedExpression {
-
-    /**
-     * 1. _.get.foo is a reference expression, qualified with _.get (or x => x.get)
-     * 2. _.get.foo(param) is a method call with an inner reference expr (1)
-     * 3. x => x.get.foo is a function expression with an inner reference expr (1)
-     * 4. { _.get.foo } is a block with an inner reference expr (1)
-     */
-    def unapply(expr: ScExpression): Option[ScExpression] = expr match {
-      case ref @ ScReferenceExpression.withQualifier(`.get`(_) | lambda(_, `.get`(_))) => Some(ref)
-      case mc @ ScMethodCall(InvokedExpression(_), _)                                  => Some(mc)
-      case fn @ ScFunctionExpr(_, Some(InvokedExpression(_)))                          => Some(fn)
-      case ScBlock(foo @ InvokedExpression(_))                                         => Some(foo)
-      case _                                                                           => None
-    }
-  }
-}
-
 abstract class ServiceWithZIO2SimplificationTypeBase(serviceWith: String, mapLike: Qualified)
     extends ServiceWithSimplificationType {
   override val hint: String = s"Replace with ZIO.$serviceWith"
 
   override def getSimplification(expr: ScExpression): Option[Simplification] = {
-    if (!expr.isZio2) return None
-
     expr match {
       case ScGenericCall(`ZIO.service`(_, _), Seq(Typeable(typeArg))) `mapLike` func if !needsMoreEnv(func, typeArg) =>
         replacement(expr, func, typeArg)

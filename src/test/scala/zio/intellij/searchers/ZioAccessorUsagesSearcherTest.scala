@@ -17,7 +17,7 @@ class ZioAccessorUsagesSearcherTest extends ScalaAnnotatorQuickFixTestBase with 
 
   override protected def defaultVersionOverride: Option[ScalaVersion] = Some(ScalaSdkOwner.preferableSdkVersion)
   protected val zioOrg                                                = "dev.zio"
-  protected val zioVersion                                            = ZInspectionTestBase.versionPatternZIO1
+  protected val zioVersion                                            = ZInspectionTestBase.versionPatternZIO2
 
   override def librariesLoaders: Seq[LibraryLoader] =
     super.librariesLoaders :+

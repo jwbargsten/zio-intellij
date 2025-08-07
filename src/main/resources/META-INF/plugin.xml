@@ -35,10 +35,10 @@
         <syntheticMemberInjector implementation="zio.intellij.synthetic.macros.JsonDerivedCodecInjector"/>
     </extensions>
 
-    <applicationListeners>
-        <listener topic="com.intellij.openapi.project.ProjectManagerListener"
-                  class="zio.intellij.testsupport.zio1.runner.TestRunnerProjectListener"/>
-    </applicationListeners>
+    <!-- <applicationListeners> -->
+        <!-- <listener topic="com.intellij.openapi.project.ProjectManagerListener" -->
+                  <!-- class="zio.intellij.testsupport.zio1.runner.TestRunnerProjectListener"/> -->
+    <!-- </applicationListeners> -->
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- simplifications -->
@@ -212,11 +212,6 @@
                          shortName="SimplifyZipLeftInspection" level="WARNING"
                          enabledByDefault="true" language="Scala"/>
 
-        <localInspection implementationClass="zio.intellij.inspections.simplifications.SimplifyForeachInspectionZIO1"
-                         displayName="Simplify .foreach by discarding unused result thus slightly improving performance"
-                         groupPath="Scala,ZIO" groupName="Simplifications"
-                         shortName="SimplifyForeachInspectionZIO1" level="WARNING"
-                         enabledByDefault="true" language="Scala"/>
 
         <localInspection implementationClass="zio.intellij.inspections.simplifications.SimplifyForeachInspectionZIO2"
                          displayName="Simplify .foreach by discarding unused result thus slightly improving performance"
@@ -344,7 +339,7 @@
         <notificationGroup id="Test Runner Download" displayType="BALLOON" isLogByDefault="true"/>
         <notificationGroup id="Test Runner Download Error" displayType="STICKY_BALLOON" isLogByDefault="true"/>
 
-        <projectService serviceImplementation="zio.intellij.testsupport.zio1.runner.TestRunnerResolveService" />
+        <!-- <projectService serviceImplementation="zio.intellij.testsupport.zio1.runner.TestRunnerResolveService" /> -->
 
         <testCreator language="Scala" implementationClass="zio.intellij.testsupport.ZTestCreator" order="first" />
 

@@ -10,7 +10,7 @@ import org.jetbrains.plugins.scala.lang.psi.api.toplevel.typedef.ScClass
 import org.jetbrains.plugins.scala.lang.psi.impl.ScalaPsiElementFactory
 import org.jetbrains.plugins.scala.lang.psi.{ElementScope, ScalaPsiUtil}
 import zio.intellij.inspections.mistakes.IncorrectTestClassInspection.ConvertToObject
-import zio.intellij.testsupport.ZTestFramework.{ZIO1SpecFQN, ZIO2SpecFQN}
+import zio.intellij.testsupport.ZTestFramework.ZIO2SpecFQN
 
 class IncorrectTestClassInspection extends LocalInspectionTool {
 
@@ -30,7 +30,7 @@ class IncorrectTestClassInspection extends LocalInspectionTool {
     else {
       val elementScope = ElementScope(definition.getProject)
 
-      val cachedClass = elementScope.getCachedClass(ZIO1SpecFQN) orElse elementScope.getCachedClass(ZIO2SpecFQN)
+      val cachedClass = elementScope.getCachedClass(ZIO2SpecFQN)
       cachedClass.exists { c =>
         !isAbstract(definition) && ScalaPsiUtil.isInheritorDeep(definition, c)
       }
