@@ -3,6 +3,7 @@ package zio.inspections
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.plugins.scala.DependencyManagerBase._
+import org.jetbrains.plugins.scala.ScalaVersion
 import org.jetbrains.plugins.scala.base.libraryLoaders._
 import org.jetbrains.plugins.scala.codeInspection.ScalaInspectionTestBase
 import org.jetbrains.plugins.scala.codeInspection.collections._
@@ -13,15 +14,29 @@ import scala.reflect._
 
 trait ZInspectionTestBase[T <: LocalInspectionTool] { base: ScalaInspectionTestBase =>
 
-  override protected def librariesLoaders: Seq[LibraryLoader] =
-    Seq(
+  override protected def additionalLibraries: Seq[LibraryLoader] = {
+    Seq(IvyManagedLoader(
+      "dev.zio" %% "zio"         % versionPattern,
+      "dev.zio" %% "zio-streams" % versionPattern,
+      "dev.zio" %% "zio-test"    % versionPattern
+    ))
+  }
+
+  /*
+  override protected def librariesLoaders: Seq[LibraryLoader] = {
+    val loaders = Seq(
       ScalaSDKLoader(),
-      IvyManagedLoader(
-        "dev.zio" %% "zio"         % versionPattern,
-        "dev.zio" %% "zio-streams" % versionPattern,
-        "dev.zio" %% "zio-test"    % versionPattern
-      )
+      ScalaLibraryLoader(ScalaVersion.Latest.Scala_3),
     )
+    loaders
+//    ScalaLibraryLoader.libraryLoadersWithSeparateScalaLibraries(
+//      loaders,
+    // ScalaVersion.Latest.Scala_2_13,
+//      ScalaVersion.Latest.Scala_3
+//    )
+  }
+
+   */
 
   def z(s: String): String =
     s"""${`import zio._`}
@@ -67,10 +82,10 @@ trait ZInspectionTestBase[T <: LocalInspectionTool] { base: ScalaInspectionTestB
 
   private val versionPattern = versionPatternZIO2
   private val `import zio._` =
-      """import zio._
-        |import zio.stream._
-        |import zio.test._
-        |import zio.test.Assertion._""".stripMargin
+    """import zio._
+      |import zio.stream._
+      |import zio.test._
+      |import zio.test.Assertion._""".stripMargin
 
 }
 

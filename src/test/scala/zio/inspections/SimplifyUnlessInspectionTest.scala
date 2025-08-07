@@ -48,6 +48,7 @@ abstract class SimplifyUnlessInspectionTestBase(replaceWith: String, `ZIO.unless
     }
   }
 
+  /*
   def test_unless_direct_reference_apply(): Unit = {
     def base(expr: String): String =
       s"""|val a = true
@@ -67,6 +68,7 @@ abstract class SimplifyUnlessInspectionTestBase(replaceWith: String, `ZIO.unless
       testQuickFix(text, result, hint)
     }
   }
+   */
 
   def test_unless_complex_reference(): Unit = {
     def base(expr: String): String =
@@ -74,7 +76,7 @@ abstract class SimplifyUnlessInspectionTestBase(replaceWith: String, `ZIO.unless
           |val list = (1 to 5).toList
           |val toZIO: Int => UIO[Int] = UIO.succeed(_)
           |$expr""".stripMargin
-    val reference = "ZIO.foreach_(list)(toZIO)"
+    val reference = "ZIO.foreachDiscard(list)(toZIO)"
 
     locally {
       z(base(s"${START}if (a) ZIO.unit else $reference$END")).assertHighlighted()

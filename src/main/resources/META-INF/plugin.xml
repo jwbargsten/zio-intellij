@@ -25,6 +25,7 @@
     <depends>com.intellij.modules.java</depends>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
+    <depends>org.intellij.intelliLang</depends>
 
     <extensions defaultExtensionNs="org.intellij.scala">
         <syntheticMemberInjector implementation="zio.intellij.synthetic.macros.ModulePatternAccessible"/>
@@ -330,7 +331,6 @@
         <referencesSearch implementation="zio.intellij.searchers.ZioAccessorUsagesSearcher"/>
 
         <!-- test support -->
-        <testFramework implementation="zio.intellij.testsupport.Zio1TestFramework" />
         <testFramework implementation="zio.intellij.testsupport.Zio2TestFramework" />
 
         <configurationType implementation="zio.intellij.testsupport.ZTestConfigurationType"/>
@@ -352,7 +352,7 @@
         <!-- Disabled due to incompatibility with IntelliJ 2025.1
         <moduleBuilder builderClass="zio.intellij.project.npw.ZioModuleBuilderAdapter" />
         -->
-        
+
         <!-- debugging -->
         <debuggerClassFilterProvider implementation="zio.intellij.debugger.ZioSteppingFilterProvider"/>
 

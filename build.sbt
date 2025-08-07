@@ -74,18 +74,7 @@ def newProject(projectName: String, base: File): Project =
     intellijPlugins := Seq(
       "com.intellij.java".toPlugin,
       s"org.intellij.scala:$scalaPluginVersion".toPlugin,
-      "JUnit".toPlugin
+      "org.intellij.intelliLang".toPlugin,
     ),
-    intellijMainJars := intellijMainJars.value.filterNot(file => excludeJarsFromPlatformDependencies(file)),
-//    intellijPluginJars := intellijPluginJars.value.map { case PluginJars(descriptor, root, cp) =>
-//      PluginJars(descriptor, root, cp.filterNot(_.getName.contains("junit-jupiter-api")))
-//    },
     (Test / scalacOptions) += "-Xmacro-settings:enable-expression-tracers"
   )
-
-def excludeJarsFromPlatformDependencies: Attributed[File] => Boolean = { file =>
-  val fileName = file.data.getName
-  // We explicitly specify dependency on JUnit 4 library.
-  // See also https://youtrack.jetbrains.com/issue/IDEA-315065/The-IDE-runtime-classpath-contains-conflicting-JUnit-classes-from-lib-junit.jar-vs-lib-junit4.jar#focus=Comments-27-6987325.0-0
-  fileName == "junit4.jar"
-}

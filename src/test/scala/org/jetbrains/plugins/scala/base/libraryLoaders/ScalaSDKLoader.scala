@@ -151,8 +151,7 @@ case class ScalaSDKLoader(
       val properties = ScalaLibraryProperties(version, compilerClasspath, Seq.empty, compilerBridge)
 
       val editor = new ExistingLibraryEditor(library, null)
-      val libtype = ScalaLibraryType()
-      editor.setType(libtype)
+      editor.setType(ScalaLibraryType())
       editor.setProperties(properties)
       editor.commit()
 
