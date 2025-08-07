@@ -19,7 +19,7 @@ abstract class ModulePatternAccessibleBase extends SyntheticMembersInjector {
   private val hasDesignator = "zio.Has"
   private val `???`         = "_root_.scala.Predef.???"
 
-  private def has(tpe: String)(context: PsiElement): String = if (context.isZio1) s"$hasDesignator[$tpe]" else tpe
+  private def has(tpe: String)(context: PsiElement): String = tpe
 
   protected val macroName: String
 

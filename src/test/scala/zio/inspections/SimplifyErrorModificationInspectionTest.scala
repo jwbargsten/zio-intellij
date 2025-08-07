@@ -73,7 +73,6 @@ class SimplifyFoldMErrorModificationInspectionTest extends SimplifyErrorModifica
 }
 class SimplifyFoldZIOErrorModificationInspectionTest
     extends SimplifyErrorModificationInspectionTest("foldZIO", "flatMap") {
-  override def isZIO1: Boolean = false
   def testInfallibleStreamNoHighlight(): Unit =
     z(s"${START}ZStream.succeed(1).$methodToReplace$END").assertNotHighlighted()
 }
@@ -82,5 +81,4 @@ class SimplifyFoldTraceMErrorModificationInspectionTest
     extends SimplifyErrorModificationInspectionTest("foldTraceM", "flatMap")
 class SimplifyFoldTraceZIOErrorModificationInspectionTest
     extends SimplifyErrorModificationInspectionTest("foldTraceZIO", "flatMap") {
-  override def isZIO1: Boolean = false
 }

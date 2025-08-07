@@ -136,8 +136,6 @@ class SimplifyEqualToTypeTest extends SimplifyAssertInspectionTest {
 }
 
 class SimplifyAssertTrueChain extends SimplifyAssertInspectionTest {
-  override protected def isZIO1 = false
-
   override protected val hint: String = "Replace with assertTrue(conditions: _*)"
 
   def test_simpleSingleAssertionNoHighlight() =

@@ -19,14 +19,16 @@ import java.{util => ju}
 final case class ScalaLibraryLoader(
   scalaVersion: ScalaVersion,
   dependencyManager: DependencyManagerBase = DependencyManager
-) extends LibraryLoader {
+)
+  extends LibraryLoader {
 
   import DependencyManagerBase._
   import ScalaLibraryLoader.findJarFile
 
   //NOTE: we ignore implicitly passed ScalaVersion and use version explicitly set in the parameters
-  override def init(implicit module: Module, ignored: ScalaVersion): Unit =
+  override def init(implicit module: Module, ignored: ScalaVersion): Unit = {
     initImpl(module)
+  }
 
   private def initImpl(module: Module): Unit = {
     import scala.jdk.CollectionConverters._
@@ -42,7 +44,7 @@ final case class ScalaLibraryLoader(
       files.map(findJarFile).asJava
     }
 
-    val libraryTable     = LibraryTablesRegistrar.getInstance.getLibraryTable(module.getProject)
+    val libraryTable = LibraryTablesRegistrar.getInstance.getLibraryTable(module.getProject)
     val scalaLibraryName = s"scala-library-${scalaVersion.minor}"
 
     def createNewLibrary: Library =
@@ -72,7 +74,7 @@ object ScalaLibraryLoader {
   def libraryLoadersWithSeparateScalaLibraries(
     superLibraryLoaders: Seq[LibraryLoader],
     scala2Version: ScalaVersion,
-    scala3Version: ScalaVersion
+    scala3Version: ScalaVersion,
   ): Seq[LibraryLoader] = {
     val scala2LibraryLoader = ScalaLibraryLoader(scala2Version)
     val scala3LibraryLoader = ScalaLibraryLoader(scala3Version)

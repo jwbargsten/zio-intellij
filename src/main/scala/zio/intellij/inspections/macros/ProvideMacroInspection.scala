@@ -28,7 +28,6 @@ class ProvideMacroInspection extends LocalInspectionTool {
   override def buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitorSimple = element => {
     val module = element.module
     if (element.isInScala3File) () // inspection causes lots of false positives in Scala 3. Disable until better times
-    else if (module.exists(_.isZio1)) visitZIO1ProvideMethods(holder)(element)
     else if (module.exists(_.isZio2)) visitZIO2ProvideMethods(holder)(element)
   }
 

@@ -2,6 +2,7 @@ package org.jetbrains.plugins.scala.util
 
 import com.intellij.openapi.Disposable
 import com.intellij.testFramework.fixtures.EditorHintFixture
+import org.junit.Assert.assertNotNull
 
 class EditorHintFixtureEx(parentDisposable: Disposable) extends EditorHintFixture(parentDisposable) {
 
@@ -12,12 +13,13 @@ class EditorHintFixtureEx(parentDisposable: Disposable) extends EditorHintFixtur
    */
   def getCurrentHintBodyText: String = {
     val text = super.getCurrentHintText
+    assertNotNull("Current hint text is empty", text)
 
     val BodyStartTag = "<body>"
-    val BodyEndTag   = "</body>"
+    val BodyEndTag = "</body>"
 
     val bodyStart = text.indexOf(BodyStartTag)
-    val bodyEnd   = text.indexOf(BodyEndTag, bodyStart)
+    val bodyEnd = text.indexOf(BodyEndTag, bodyStart)
     if (bodyStart >= 0 || bodyEnd >= 0)
       text.substring(bodyStart + BodyStartTag.length, bodyEnd)
     else

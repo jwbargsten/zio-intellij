@@ -40,9 +40,9 @@ class UnnecessaryEnvProvisionInspection extends LocalInspectionTool {
     expr: ScExpression,
     base: ScExpression,
     toDelete: ScReference
-  ): Unit =
-    expr.findImplicitArguments.foreach { args =>
-      if (args.map(_.element).exists(isNeedsEnvEv)) {
+  ): Unit = {
+    expr.findImplicitArguments.foreach { clause =>
+      if (clause.args.map(_.element).exists(isNeedsEnvEv)) {
         holder.registerProblem(
           expr,
           getDisplayName,
@@ -51,6 +51,7 @@ class UnnecessaryEnvProvisionInspection extends LocalInspectionTool {
         )
       }
     }
+  }
 }
 
 object UnnecessaryEnvProvisionInspection {

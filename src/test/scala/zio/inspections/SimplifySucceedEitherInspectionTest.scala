@@ -83,42 +83,7 @@ abstract class SucceedLeftInspectionTest extends SimplifySucceedEitherInspection
 
 }
 
-class SucceedLeftInspectionTestZIO1 extends SucceedLeftInspectionTest {
-  override protected def isZIO1 = true
-
-  def test_UIO_Left(): Unit = {
-    z(s"${START}UIO(Left(a))$END").assertHighlighted()
-    val text   = z("UIO(Left(a))")
-    val result = z("UIO.left(a)")
-    testQuickFix(text, result, hint)
-  }
-
-  def test_UIO_util_Left(): Unit = {
-    z(s"${START}UIO(util.Left(a))$END").assertHighlighted()
-    val text   = z("UIO(util.Left(a))")
-    val result = z("UIO.left(a)")
-    testQuickFix(text, result, hint)
-  }
-
-  def test_UIO_apply_Left(): Unit = {
-    z(s"${START}UIO.apply(Left(a))$END").assertHighlighted()
-    val text   = z("UIO.apply(Left(a))")
-    val result = z("UIO.left(a)")
-    testQuickFix(text, result, hint)
-  }
-
-  def test_UIO_apply_util_Left(): Unit = {
-    z(s"${START}UIO.apply(util.Left(a))$END").assertHighlighted()
-    val text   = z("UIO.apply(util.Left(a))")
-    val result = z("UIO.left(a)")
-    testQuickFix(text, result, hint)
-  }
-
-}
-
-class SucceedLeftInspectionTestZIO2 extends SucceedLeftInspectionTest {
-  override protected def isZIO1 = false
-}
+class SucceedLeftInspectionTestZIO2 extends SucceedLeftInspectionTest
 
 abstract class SucceedRightInspectionTest extends SimplifySucceedEitherInspectionTest("ZIO.right") {
 
@@ -195,39 +160,4 @@ abstract class SucceedRightInspectionTest extends SimplifySucceedEitherInspectio
   }
 }
 
-class SucceedRightInspectionTestZIO1 extends SucceedRightInspectionTest {
-  override protected def isZIO1 = true
-
-  def test_UIO_Right(): Unit = {
-    z(s"${START}UIO(Right(a))$END").assertHighlighted()
-    val text   = z("UIO(Right(a))")
-    val result = z("UIO.right(a)")
-    testQuickFix(text, result, hint)
-  }
-
-  def test_UIO_util_Right(): Unit = {
-    z(s"${START}UIO(util.Right(a))$END").assertHighlighted()
-    val text   = z("UIO(util.Right(a))")
-    val result = z("UIO.right(a)")
-    testQuickFix(text, result, hint)
-  }
-
-  def test_UIO_apply_Right(): Unit = {
-    z(s"${START}UIO.apply(Right(a))$END").assertHighlighted()
-    val text   = z("UIO.apply(Right(a))")
-    val result = z("UIO.right(a)")
-    testQuickFix(text, result, hint)
-  }
-
-  def test_UIO_apply_util_Right(): Unit = {
-    z(s"${START}UIO.apply(util.Right(a))$END").assertHighlighted()
-    val text   = z("UIO.apply(util.Right(a))")
-    val result = z("UIO.right(a)")
-    testQuickFix(text, result, hint)
-  }
-
-}
-
-class SucceedRightInspectionTestZIO2 extends SucceedRightInspectionTest {
-  override protected def isZIO1 = false
-}
+class SucceedRightInspectionTestZIO2 extends SucceedRightInspectionTest

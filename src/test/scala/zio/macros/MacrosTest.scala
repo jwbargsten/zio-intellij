@@ -14,12 +14,9 @@ import zio.inspections.ZInspectionTestBase
 
 abstract class MacrosTest extends ScalaLightCodeInsightFixtureTestCase {
   protected val zioOrg = "dev.zio"
-  protected def isZIO1 = true
 
-  private val zioVersion =
-    if (isZIO1) ZInspectionTestBase.versionPatternZIO1
-    else ZInspectionTestBase.versionPatternZIO2
-  private val zioJsonVersion = if (isZIO1) "0.2.0" else "0.5.0"
+  private val zioVersion = ZInspectionTestBase.versionPatternZIO2
+  private val zioJsonVersion = "0.5.0"
 
   protected var extendedObject: ScObject                                  = _
   implicit protected var typePresentationContext: TypePresentationContext = _
@@ -38,9 +35,7 @@ abstract class MacrosTest extends ScalaLightCodeInsightFixtureTestCase {
         zioOrg %% "zio-json-macros" % zioJsonVersion
       )
 
-    val versionSpecific =
-      if (isZIO1) Nil
-      else Seq(zioOrg %% "zio-mock" % "1.0.0-RC8")
+    val versionSpecific = Seq(zioOrg %% "zio-mock" % "1.0.0-RC8")
 
     super.librariesLoaders :+ IvyManagedLoader(common ++ versionSpecific: _*)
   }

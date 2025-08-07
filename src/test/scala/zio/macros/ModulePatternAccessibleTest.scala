@@ -161,8 +161,6 @@ class ModulePatternAccessibleAliasTest extends ModulePatternAccessibleTestBase(i
 
 class ModulePatternAccessibleZIO2Test extends MacrosTest {
 
-  override protected val isZIO1: Boolean = false
-
   override protected val code =
     s"""import zio._
        |import zio.macros.accessible

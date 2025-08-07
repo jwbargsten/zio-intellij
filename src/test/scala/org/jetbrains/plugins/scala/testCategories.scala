@@ -2,9 +2,20 @@ package org.jetbrains.plugins.scala
 
 // tests marked with these categories will be run as a separate step
 
+
 trait SlowTests
 
+/**
+ * Same as [[SlowTests]], the category grew too large and takes a long time to run.
+ */
+trait SlowTests2
+
 trait DebuggerTests
+
+/**
+ * A subset of [[DebuggerTests]], that test expression evaluation. Roughly half of all debugger tests.
+ */
+trait DebuggerEvaluationTests
 
 trait ScalacTests
 
@@ -24,10 +35,8 @@ trait WorksheetEvaluationTests
 trait RandomTypingTests
 trait HighlightingTests
 
-/**
- * Tests that may fail intermittently or depending on environment.
- * Eg run locally but not on build server.
- */
+/** Tests that may fail intermittently or depending on environment. 
+ * Eg run locally but not on build server. */
 trait FlakyTests
 
 /** Test cases generated from testdata file sets. Mostly contains lexer and parser tests. */
@@ -44,9 +53,12 @@ trait CompletionTests
  */
 trait EditorTests
 
-trait CompilationTests
+trait CompilationTests_Zinc
+
+trait CompilationTests_IDEA
 
 /**
- * See [[org.jetbrains.plugins.scala.internal.bundle.ScalaBundleSortingTest]]
+ * Applied to tests in the `org.jetbrains.plugins.scala.compiler.highlighting` package in
+ * the `compiler-integration` module.
  */
-trait BundleSortingTests
+trait CompilerHighlightingTests

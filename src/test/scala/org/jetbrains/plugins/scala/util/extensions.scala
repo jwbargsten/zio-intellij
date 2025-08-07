@@ -15,11 +15,12 @@ object extensions {
       )
 
     // add "before" state to conveniently view failed tests
-    private def addBeforePrefix(textBefore: String, textAfter: String) =
+    private def addBeforePrefix(textBefore: String, textAfter: String)= {
       s"""<<<Before>>>:
          |$textBefore
          |----------------------------------------------------
          |<<<After>>>:
          |$textAfter""".stripMargin
+    }
   }
 }

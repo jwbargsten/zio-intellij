@@ -1,4 +1,5 @@
-package org.jetbrains.plugins.scala.util
+package org.jetbrains.plugins.scala
+package util
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.plugins.scala.lang.formatting.settings.ScalaCodeStyleSettings
@@ -7,7 +8,7 @@ import java.util
 
 object TypeAnnotationSettings {
   // TODO remove?
-  def set(project: Project, newSettings: ScalaCodeStyleSettings): Unit = {
+  def set(project: Project, newSettings: ScalaCodeStyleSettings): Unit ={
     val settings: ScalaCodeStyleSettings = ScalaCodeStyleSettings.getInstance(project)
 
     import settings._
@@ -34,8 +35,8 @@ object TypeAnnotationSettings {
     TYPE_ANNOTATION_EXCLUDE_ANNOTATED_WITH = new util.HashSet(newSettings.TYPE_ANNOTATION_EXCLUDE_ANNOTATED_WITH)
     TYPE_ANNOTATION_EXCLUDE_WHEN_TYPE_MATCHES = new util.HashSet(newSettings.TYPE_ANNOTATION_EXCLUDE_WHEN_TYPE_MATCHES)
   }
-
-  def alwaysAddType(settings: ScalaCodeStyleSettings): ScalaCodeStyleSettings = {
+  
+  def alwaysAddType(settings: ScalaCodeStyleSettings): ScalaCodeStyleSettings ={
     val coppedSettings = settings.clone().asInstanceOf[ScalaCodeStyleSettings]
 
     import coppedSettings._
@@ -66,17 +67,17 @@ object TypeAnnotationSettings {
     coppedSettings
   }
 
-  def noTypeAnnotationForPublic(settings: ScalaCodeStyleSettings): ScalaCodeStyleSettings = {
+  def noTypeAnnotationForPublic(settings: ScalaCodeStyleSettings): ScalaCodeStyleSettings ={
     settings.TYPE_ANNOTATION_PUBLIC_MEMBER = false
     settings
   }
 
-  def noTypeAnnotationForProtected(settings: ScalaCodeStyleSettings): ScalaCodeStyleSettings = {
+  def noTypeAnnotationForProtected(settings: ScalaCodeStyleSettings): ScalaCodeStyleSettings ={
     settings.TYPE_ANNOTATION_PROTECTED_MEMBER = false
     settings
   }
 
-  def noTypeAnnotationForLocal(settings: ScalaCodeStyleSettings): ScalaCodeStyleSettings = {
+  def noTypeAnnotationForLocal(settings: ScalaCodeStyleSettings): ScalaCodeStyleSettings ={
     settings.TYPE_ANNOTATION_LOCAL_DEFINITION = false
     settings
   }

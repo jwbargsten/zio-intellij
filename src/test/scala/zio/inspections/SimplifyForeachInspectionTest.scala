@@ -9,7 +9,6 @@ import scala.reflect.ClassTag
 abstract class SimplifyForeachInspectionTest[S <: ZInspection: ClassTag](
   methodToReplace: String,
   methodToReplaceWith: String,
-  isZIO1Test: Boolean,
   isParN: Boolean = false
 ) extends ZSimplifyInspectionTest[S] {
 
@@ -46,8 +45,6 @@ abstract class SimplifyForeachInspectionTest[S <: ZInspection: ClassTag](
        |  }""".stripMargin
 
   override protected val hint: String = s"Replace with ZIO.$methodToReplaceWith"
-
-  override protected def isZIO1: Boolean = isZIO1Test
 
   def testForCompHighlighting(): Unit =
     z {
@@ -243,38 +240,14 @@ abstract class SimplifyForeachInspectionTest[S <: ZInspection: ClassTag](
 
 }
 
-class SimplifyForeachToForeach_ZIO1Test
-    extends SimplifyForeachInspectionTest[SimplifyForeachInspectionZIO1](
-      methodToReplace = "foreach",
-      methodToReplaceWith = "foreach_",
-      isZIO1Test = true
-    )
-
 class SimplifyForeachToForeach_ZIO2Test
     extends SimplifyForeachInspectionTest[SimplifyForeachInspectionZIO2](
       methodToReplace = "foreach",
       methodToReplaceWith = "foreachDiscard",
-      isZIO1Test = false
-    )
-
-class SimplifyForeachParToForeachPar_ZIO1Test
-    extends SimplifyForeachInspectionTest[SimplifyForeachInspectionZIO1](
-      methodToReplace = "foreachPar",
-      methodToReplaceWith = "foreachPar_",
-      isZIO1Test = true
     )
 
 class SimplifyForeachParToForeachPar_ZIO2Test
     extends SimplifyForeachInspectionTest[SimplifyForeachInspectionZIO2](
       methodToReplace = "foreachPar",
       methodToReplaceWith = "foreachParDiscard",
-      isZIO1Test = false
-    )
-
-class SimplifyForeachParNToForeachParN_Test
-    extends SimplifyForeachInspectionTest[SimplifyForeachInspectionZIO1](
-      methodToReplace = "foreachParN",
-      methodToReplaceWith = "foreachParN_",
-      isZIO1Test = true,
-      isParN = true
     )

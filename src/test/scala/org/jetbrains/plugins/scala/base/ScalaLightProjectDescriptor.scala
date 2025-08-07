@@ -9,9 +9,7 @@ import com.intellij.testFramework.LightProjectDescriptor
  *  - [[com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase.ProjectDescriptor]]
  *  - [[com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor]]
  */
-class ScalaLightProjectDescriptor(
-  private val sharedProjectToken: SharedTestProjectToken = SharedTestProjectToken.DoNotShare
-) extends LightProjectDescriptor {
+class ScalaLightProjectDescriptor(private val sharedProjectToken: SharedTestProjectToken = SharedTestProjectToken.DoNotShare) extends LightProjectDescriptor {
 
   override def setUpProject(project: Project, handler: LightProjectDescriptor.SetupHandler): Unit = {
     super.setUpProject(project, handler)

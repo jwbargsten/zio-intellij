@@ -4,8 +4,8 @@ import zio.intellij.inspections.simplifications.SimplifyIgnoreInspection
 
 abstract class SimplifyIgnoreInspectionTest extends ZSimplifyInspectionTest[SimplifyIgnoreInspection] {
 
-  private val foldCauseM = if (isZIO1) "foldCauseM" else "foldCauseZIO"
-  private val Task       = if (isZIO1) "Task" else "ZIO.attempt"
+  private val foldCauseM = "foldCauseZIO"
+  private val Task       = "ZIO.attempt"
 
   override protected val hint = "Replace with .ignore"
 
@@ -38,7 +38,4 @@ abstract class SimplifyIgnoreInspectionTest extends ZSimplifyInspectionTest[Simp
   }
 }
 
-class SimplifyIgnoreInspectionZIO1Test extends SimplifyIgnoreInspectionTest
-class SimplifyIgnoreInspectionZIO2Test extends SimplifyIgnoreInspectionTest {
-  override def isZIO1: Boolean = false
-}
+class SimplifyIgnoreInspectionZIO2Test extends SimplifyIgnoreInspectionTest

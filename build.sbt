@@ -1,7 +1,7 @@
 import org.jetbrains.sbtidea.{AutoJbr, JbrPlatform}
 
 lazy val scala213           = "2.13.16"
-lazy val scalaPluginVersion = "2025.2.26"
+lazy val scalaPluginVersion = "2025.2.593:Nightly"
 lazy val minorVersion       = "0"
 lazy val buildVersion       = sys.env.getOrElse("ZIO_INTELLIJ_BUILD_NUMBER", minorVersion)
 lazy val pluginVersion      = s"2025.2.1.$buildVersion"
@@ -66,13 +66,26 @@ def newProject(projectName: String, base: File): Project =
     version := pluginVersion,
     libraryDependencies ++= Seq(
       "junit"             % "junit"             % "4.13.2" % Test,
+      "pl.pragmatists"    % "JUnitParams"       % "1.1.1"  % Test,
       "com.github.sbt"    % "junit-interface"   % "0.13.3" % Test,
-      "org.junit.jupiter" % "junit-jupiter-api" % "5.13.0" % Test
+      "org.junit.jupiter" % "junit-jupiter-api" % "5.13.4" % Test,
     ),
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-s", "-a", "+c", "+q"),
     intellijPlugins := Seq(
       "com.intellij.java".toPlugin,
-      s"org.intellij.scala:$scalaPluginVersion".toPlugin
+      s"org.intellij.scala:$scalaPluginVersion".toPlugin,
+      "JUnit".toPlugin
     ),
+    intellijMainJars := intellijMainJars.value.filterNot(file => excludeJarsFromPlatformDependencies(file)),
+//    intellijPluginJars := intellijPluginJars.value.map { case PluginJars(descriptor, root, cp) =>
+//      PluginJars(descriptor, root, cp.filterNot(_.getName.contains("junit-jupiter-api")))
+//    },
     (Test / scalacOptions) += "-Xmacro-settings:enable-expression-tracers"
   )
+
+def excludeJarsFromPlatformDependencies: Attributed[File] => Boolean = { file =>
+  val fileName = file.data.getName
+  // We explicitly specify dependency on JUnit 4 library.
+  // See also https://youtrack.jetbrains.com/issue/IDEA-315065/The-IDE-runtime-classpath-contains-conflicting-JUnit-classes-from-lib-junit.jar-vs-lib-junit4.jar#focus=Comments-27-6987325.0-0
+  fileName == "junit4.jar"
+}

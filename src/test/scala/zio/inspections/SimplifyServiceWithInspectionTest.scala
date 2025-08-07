@@ -150,8 +150,6 @@ class SimplifyServiceWithInspectionTestZIO1 extends ZSimplifyInspectionTest[Simp
 }
 
 class SimplifyServiceWithInspectionTestZIO2 extends ZSimplifyInspectionTest[SimplifyServiceWithInspection] {
-  override protected def isZIO1 = false
-
   override protected val hint = "Replace with ZIO.serviceWith"
 
   private def base(expr: String): String =
@@ -212,8 +210,6 @@ class SimplifyServiceWithInspectionTestZIO2 extends ZSimplifyInspectionTest[Simp
 }
 
 class SimplifyServiceWithZIOInspectionTestZIO2 extends ZSimplifyInspectionTest[SimplifyServiceWithInspection] {
-  override protected def isZIO1 = false
-
   override protected val hint = "Replace with ZIO.serviceWithZIO"
 
   private def base(expr: String): String =

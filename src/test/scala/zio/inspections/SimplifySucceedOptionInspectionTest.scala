@@ -21,42 +21,7 @@ abstract class SucceedNoneInspectionTest extends SimplifyOptionInspectionTest("Z
 
 }
 
-class SucceedNoneInspectionTestZIO1 extends SucceedNoneInspectionTest {
-  override def isZIO1: Boolean = true
-
-  def test_effectTotal_None(): Unit = {
-    z(s"${START}ZIO.effectTotal(None)$END").assertHighlighted()
-    val text   = z("ZIO.effectTotal(None)")
-    val result = z("ZIO.none")
-    testQuickFix(text, result, hint)
-  }
-
-  def test_effect_None(): Unit = {
-    z(s"${START}ZIO.effect(None)$END").assertHighlighted()
-    val text   = z("ZIO.effect(None)")
-    val result = z("ZIO.none")
-    testQuickFix(text, result, hint)
-  }
-
-  def test_UIO_None(): Unit = {
-    z(s"${START}UIO(None)$END").assertHighlighted()
-    val text   = z("UIO(None)")
-    val result = z("UIO.none")
-    testQuickFix(text, result, hint)
-  }
-
-  def test_UIO_apply_None(): Unit = {
-    z(s"${START}UIO.apply(None)$END").assertHighlighted()
-    val text   = z("UIO.apply(None)")
-    val result = z("UIO.none")
-    testQuickFix(text, result, hint)
-  }
-
-}
-
 class SucceedNoneInspectionTestZIO2 extends SucceedNoneInspectionTest {
-  override def isZIO1: Boolean = false
-
   def test_attempt_None(): Unit = {
     z(s"${START}ZIO.attempt(None)$END").assertHighlighted()
     val text   = z("ZIO.attempt(None)")
@@ -105,24 +70,4 @@ abstract class SucceedSomeInspectionTest extends SimplifyOptionInspectionTest("Z
 
 }
 
-class SucceedSomeInspectionTestZIO1 extends SucceedSomeInspectionTest {
-  override def isZIO1: Boolean = true
-
-  def test_UIO_Some(): Unit = {
-    z(s"${START}UIO(Some(a))$END").assertHighlighted()
-    val text   = z("UIO(Some(a))")
-    val result = z("UIO.some(a)")
-    testQuickFix(text, result, hint)
-  }
-
-  def test_UIO_apply_Some(): Unit = {
-    z(s"${START}UIO.apply(Some(a))$END").assertHighlighted()
-    val text   = z("UIO.apply(Some(a))")
-    val result = z("UIO.some(a)")
-    testQuickFix(text, result, hint)
-  }
-}
-
-class SucceedSomeInspectionTestZIO2 extends SucceedSomeInspectionTest {
-  override def isZIO1: Boolean = false
-}
+class SucceedSomeInspectionTestZIO2 extends SucceedSomeInspectionTest

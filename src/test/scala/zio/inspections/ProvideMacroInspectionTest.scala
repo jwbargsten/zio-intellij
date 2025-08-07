@@ -22,7 +22,7 @@ abstract class ProvideMacroInspectionTestBase extends ZScalaInspectionTest[Provi
   override protected def descriptionMatches(s: String): Boolean =
     s != null && allPossibleErrors.exists(s.startsWith)
 
-  protected val imports: String = if (isZIO1) "import zio.magic._" else ""
+  protected val imports: String = ""
 
 }
 
@@ -169,37 +169,7 @@ abstract class ProvideMacroInspectionTest(val provide: String) extends ProvideMa
 
 }
 
-class ProvideMacroZIO1InspectionTest extends ProvideMacroInspectionTest("inject") {
-
-  override protected def librariesLoaders: Seq[LibraryLoader] =
-    IvyManagedLoader("io.github.kitlangton" %% "zio-magic" % "0.3.12") +: super.librariesLoaders
-
-  override protected def allPossibleErrors: List[String] = "Contains non-Has types" +: super.allPossibleErrors
-
-  override protected def isZIO1 = true
-
-  def testTopLevelNonHasHighlighting(): Unit = z {
-    s"""$imports
-       |
-       |val effect: URIO[String, Unit] = ???
-       |val layer: ULayer[String] = ???
-       |${r(s"effect.$provide(layer)")}""".stripMargin
-  }.assertHighlighted()
-
-  def testTransitiveNonHasHighlighting(): Unit = z {
-    s"""$imports
-       |
-       |val effect: URIO[${Has("String")}, Unit] = ???
-       |val layer1: ULayer[Int] = ???
-       |val layer2: URLayer[Int, ${Has("String")}] = ???
-       |${r(s"effect.$provide(layer1, layer2)")}""".stripMargin
-  }.assertHighlighted()
-
-}
-
 class ProvideMacroZIO2InspectionTest extends ProvideMacroInspectionTest("provide") {
-
-  override protected def isZIO1 = false
 
   def testSideEffectNoHighlighting(): Unit = z {
     s"""
@@ -368,8 +338,6 @@ class ProvideSomeMacroZIO1InspectionTest extends ProvideSomeMacroInspectionTest(
 
   override protected def allPossibleErrors: List[String] = "Contains non-Has types" +: super.allPossibleErrors
 
-  override protected def isZIO1 = true
-
   def testTopLevelNonHasHighlighting(): Unit = z {
     s"""$imports
        |
@@ -390,8 +358,6 @@ class ProvideSomeMacroZIO1InspectionTest extends ProvideSomeMacroInspectionTest(
 }
 
 class ProvideSomeMacroZIO2InspectionTest extends ProvideSomeMacroInspectionTest("provideSome") {
-
-  override protected def isZIO1 = false
 
   def testSideEffectNoHighlighting(): Unit = z {
     s"""
@@ -441,9 +407,7 @@ class ProvideSomeMacroZIO2InspectionTest extends ProvideSomeMacroInspectionTest(
 }
 
 abstract class ProvideMacroSpecInspectionTestBase extends ZScalaInspectionTest[ProvideMacroInspection] {
-  override protected def librariesLoaders: Seq[LibraryLoader] =
-    if (isZIO1) IvyManagedLoader("io.github.kitlangton" %% "zio-magic" % "0.3.12") +: super.librariesLoaders
-    else super.librariesLoaders
+  override protected def librariesLoaders: Seq[LibraryLoader] = super.librariesLoaders
 
   override protected def description                            = "Please provide layers for the following"
   override protected def descriptionMatches(s: String): Boolean = s != null && s.startsWith(description)
@@ -490,7 +454,6 @@ class ProvideSomeSharedMacroZIO1SpecInspectionTest
     extends ProvideSomeMacroZIO1SpecInspectionTestBase("injectSomeShared")
 
 abstract class ProvideMacroZIO2SpecInspectionTestBase(val provide: String) extends ProvideMacroSpecInspectionTestBase {
-  override protected def isZIO1 = false
   def testValidSimpleNoHighlighting(): Unit = z {
     s"""
        |val spec: Spec[String, Unit] = ???
@@ -509,7 +472,6 @@ class ProvideSharedMacroZIO2SpecInspectionTest extends ProvideMacroZIO2SpecInspe
 
 abstract class ProvideSomeMacroZIO2SpecInspectionTestBase(val provideSome: String)
     extends ProvideMacroSpecInspectionTestBase {
-  override protected def isZIO1 = false
   def testValidSimpleNoHighlighting(): Unit = z {
     s"""
        |val spec: Spec[String with Boolean, Unit] = ???
@@ -528,9 +490,7 @@ class ProvideSomeSharedMacroZIO2SpecInspectionTest
     extends ProvideSomeMacroZIO2SpecInspectionTestBase("provideSomeShared")
 
 abstract class ProvideMacroZLayerInspectionTestBase extends ZScalaInspectionTest[ProvideMacroInspection] {
-  override protected def librariesLoaders: Seq[LibraryLoader] =
-    if (isZIO1) IvyManagedLoader("io.github.kitlangton" %% "zio-magic" % "0.3.12") +: super.librariesLoaders
-    else super.librariesLoaders
+  override protected def librariesLoaders: Seq[LibraryLoader] = super.librariesLoaders
 
   override protected def description                            = "Please provide layers for the following"
   override protected def descriptionMatches(s: String): Boolean = s != null && s.startsWith(description)
@@ -579,7 +539,6 @@ class ProvideSomeMagicDebugMacroZIO1ZLayerInspectionTest
     extends ProvideSomeMacroZIO1ZLayerInspectionTestBase("fromSomeMagicDebug")
 
 class ProvideMacroZIO2ZLayerInspectionTest extends ProvideMacroZLayerInspectionTestBase {
-  override protected def isZIO1 = false
   def testValidSimpleNoHighlighting(): Unit = z {
     s"""
        |val layer: ULayer[String] = ???
@@ -593,7 +552,6 @@ class ProvideMacroZIO2ZLayerInspectionTest extends ProvideMacroZLayerInspectionT
 }
 
 class ProvideSomeMacroZIO2ZLayerInspectionTest extends ProvideMacroZLayerInspectionTestBase {
-  override protected def isZIO1 = false
   def testValidSimpleNoHighlighting(): Unit = z {
     s"""
        |val layer: ULayer[String] = ???
@@ -609,7 +567,6 @@ class ProvideSomeMacroZIO2ZLayerInspectionTest extends ProvideMacroZLayerInspect
 // special test to expect _very_ specific error message
 // checking if types are rendered correctly
 class ProvideMacroInspectionRenderingTest extends ZScalaInspectionTest[ProvideMacroInspection] {
-  override def isZIO1: Boolean = false
 
   // not 1. _root_.foo.Bar
   override protected def description =

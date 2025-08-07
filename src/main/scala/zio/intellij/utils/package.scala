@@ -274,7 +274,6 @@ package object utils {
 
     def hasZio = zioVersion.isDefined
 
-    def isZio1 = zioVersion.exists(_.major < ZioVersion.ZIO.`2.0.0`.major)
     def isZio2 = zioVersion.exists(_.major >= ZioVersion.ZIO.`2.0.0`.major)
 
     @CachedInUserData(module, ScalaCompilerConfiguration.modTracker(module.getProject))
@@ -305,7 +304,6 @@ package object utils {
 
   implicit class PsiElementSyntax(private val element: PsiElement) extends AnyVal {
     def hasZio: Boolean = element.module.exists(_.hasZio)
-    def isZio1: Boolean = element.module.exists(_.isZio1)
     def isZio2: Boolean = element.module.exists(_.isZio2)
   }
 

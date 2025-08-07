@@ -13,8 +13,6 @@ import scala.reflect._
 
 trait ZInspectionTestBase[T <: LocalInspectionTool] { base: ScalaInspectionTestBase =>
 
-  protected def isZIO1 = true
-
   override protected def librariesLoaders: Seq[LibraryLoader] =
     Seq(
       ScalaSDKLoader(),
@@ -48,7 +46,7 @@ trait ZInspectionTestBase[T <: LocalInspectionTool] { base: ScalaInspectionTestB
        |}
        |""".stripMargin
 
-  def Has(tpe: String): String = if (isZIO1) s"Has[$tpe]" else tpe
+  def Has(tpe: String): String = tpe
 
   def range(str: String): String = s"$START$str$END"
 
@@ -67,21 +65,12 @@ trait ZInspectionTestBase[T <: LocalInspectionTool] { base: ScalaInspectionTestB
     }
   }
 
-  private val versionPattern = if (isZIO1) versionPatternZIO1 else versionPatternZIO2
+  private val versionPattern = versionPatternZIO2
   private val `import zio._` =
-    if (isZIO1) {
-      """import zio._
-        |import zio.console._
-        |import zio.duration._
-        |import zio.stream._
-        |import zio.test._
-        |import zio.test.Assertion._""".stripMargin
-    } else {
       """import zio._
         |import zio.stream._
         |import zio.test._
         |import zio.test.Assertion._""".stripMargin
-    }
 
 }
 

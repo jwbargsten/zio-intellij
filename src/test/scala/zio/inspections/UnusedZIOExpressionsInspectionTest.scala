@@ -39,8 +39,6 @@ class UnusedZIOExpressionsInspectionTest extends ZScalaInspectionTest[UnusedZIOE
 
 class UnusedZIOSpecInspectionTest extends ZScalaInspectionTest[UnusedZIOExpressionsInspection] {
 
-  override protected def isZIO1 = false
-
   override protected val description = UnusedZIOExpressionsInspection.unusedZioSpecMessage
 
   def test_two_tests(): Unit =

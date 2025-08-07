@@ -42,8 +42,7 @@ abstract class SimpleTestCase extends UsefulTestCase with MatcherAssertions with
   }
 
   implicit class Findable(private val element: ScalaFile) {
-    def target: PsiElement = element
-      .depthFirst()
+    def target: PsiElement = element.depthFirst()
       .dropWhile(!_.is[PsiComment])
       .drop(1)
       .dropWhile(_.is[PsiWhiteSpace])
@@ -54,10 +53,8 @@ abstract class SimpleTestCase extends UsefulTestCase with MatcherAssertions with
 
   private def toString(root: PsiElement, level: Int): String = {
     val indent = List.fill(level)("  ").mkString
-    val content =
-      if (root.is[LeafPsiElement])
-        "\"%s\"".format(root.getText)
-      else root.getClass.getSimpleName
+    val content = if (root.is[LeafPsiElement])
+      "\"%s\"".format(root.getText) else root.getClass.getSimpleName
     val title = "%s%s\n".format(indent, content)
     title + root.children.map(toString(_, level + 1)).mkString
   }

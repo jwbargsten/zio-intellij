@@ -73,30 +73,7 @@ object ServiceWithSimplificationTypeZIO1 extends ServiceWithSimplificationType {
     Some(replacement)
   }
 
-  override def getSimplification(expr: ScExpression): Option[Simplification] = {
-    if (!expr.isZio1) return None
-
-    expr match {
-      case ScMethodCall(accessCall, Seq(InvokedExpression(ref))) =>
-        accessCall match {
-          // ZIO.accessM(...)
-          case `ZIO.accessM`(zioType, _) =>
-            // not really a fair comparison, but it's too laborious to check if the inferred type is a supertype of inner type
-            // let's keep it simple for now
-            if (createType(s"_root_.scala.Any", expr).exists(needsMoreEnv(ref, _))) None
-            else replacement(zioType, expr, ref, None)
-          // ZIO.accessM[TypeAlias](...)
-          case ScGenericCall(`ZIO.accessM`(zioType, _), Seq(typeArg))
-              if !typeArg.`type`().exists(needsMoreEnv(ref, _)) =>
-            replacement(zioType, expr, ref, extractServiceTypeArgument(Some(typeArg)))
-          case _ => None
-        }
-      case ScGenericCall(`ZIO.service`(zioType, _), Seq(typeArg)) `.flatMap` func =>
-        if (createType(s"_root_.zio.Has[${typeArg.getText}]", typeArg).exists(needsMoreEnv(func, _))) None
-        else replacement(zioType, expr, func, typeArg.`type`().toOption)
-      case _ => None
-    }
-  }
+  override def getSimplification(expr: ScExpression): Option[Simplification] = None
 
   object InvokedExpression {
 

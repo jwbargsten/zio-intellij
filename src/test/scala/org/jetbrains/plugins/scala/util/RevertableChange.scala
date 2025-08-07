@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.{Registry, RegistryValue}
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.plugins.scala.project.ModuleExt
 import org.jetbrains.plugins.scala.project.settings.{ScalaCompilerSettings, ScalaCompilerSettingsProfile}
 import org.jetbrains.plugins.scala.settings.ScalaProjectSettings
 import org.jetbrains.plugins.scala.util.RevertableChange.CompositeRevertableChange
@@ -27,33 +26,39 @@ trait RevertableChange {
    */
   final def applyChange(parentDisposable: Disposable): Unit = {
     applyChange()
-    Disposer.register(parentDisposable, () => revertChange())
+    Disposer.register(parentDisposable, () => {
+      revertChange()
+    })
   }
 
-  final def applyChange(testCase: UsefulTestCase): Unit =
+  final def applyChange(testCase: UsefulTestCase): Unit = {
     applyChange(testCase.getTestRootDisposable)
+  }
 
   final def apply(body: => Any): Unit =
     run(body)
 
-  final def run(body: => Any): Unit = {
+  final def run[T](body: => T): T = {
     this.applyChange()
-    try body
-    finally this.revertChange()
+    try
+      body
+    finally
+      this.revertChange()
   }
 
   final def |+|(change: RevertableChange): RevertableChange = {
     val changes = this match {
       case composite: CompositeRevertableChange => composite.changes :+ change
-      case _                                    => Seq(this, change)
+      case _ => Seq(this, change)
     }
     new CompositeRevertableChange(changes)
   }
 }
 
 object RevertableChange {
-  def combine(changes: Seq[RevertableChange]): RevertableChange =
+  def combine(changes: Seq[RevertableChange]): RevertableChange = {
     changes.foldLeft[RevertableChange](NoOpRevertableChange)(_ |+| _)
+  }
 
   object NoOpRevertableChange extends RevertableChange {
     override def applyChange(): Unit = ()
@@ -106,9 +111,9 @@ object RevertableChange {
         }
     }
 
-  def withModifiedSetting[Settings, T](
-    instance: => Settings
-  )(value: T)(get: Settings => T, set: (Settings, T) => Unit): RevertableChange =
+  def withModifiedSetting[Settings, T](instance: => Settings)
+                                      (value: T)
+                                      (get: Settings => T, set: (Settings, T) => Unit): RevertableChange =
     new RevertableChange {
       private var before: Option[T] = None
 
@@ -135,7 +140,7 @@ object RevertableChange {
     }
 
   def withApplicationSettingsSaving: RevertableChange = new RevertableChange {
-    private var saveAllowedBefore: Boolean      = _
+    private var saveAllowedBefore: Boolean = _
     private lazy val application: ApplicationEx = ApplicationManagerEx.getApplicationEx
 
     override def applyChange(): Unit = {
@@ -149,6 +154,7 @@ object RevertableChange {
       application.saveSettings()
     }
   }
+
 
   def withModifiedCodeInsightSettings[T](
     get: CodeInsightSettings => T,
@@ -191,7 +197,7 @@ object RevertableChange {
     module: Module,
     getModifiedCopy: ScalaCompilerSettings => ScalaCompilerSettings
   ): RevertableChange = new RevertableChange {
-    private lazy val profile     = ScalaCompilerSettingsProfile.forModule(module)
+    private lazy val profile = ScalaCompilerSettingsProfile.forModule(module)
     private lazy val oldSettings = profile.getSettings
 
     override def applyChange(): Unit = {
@@ -199,7 +205,8 @@ object RevertableChange {
       profile.setSettings(newSettings)
     }
 
-    override def revertChange(): Unit =
+    override def revertChange(): Unit = {
       profile.setSettings(oldSettings)
+    }
   }
 }

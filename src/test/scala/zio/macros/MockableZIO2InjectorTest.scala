@@ -5,8 +5,6 @@ import zio.intellij.utils.createType
 
 class MockableZIO2InjectorTest extends MacrosTest {
 
-  override protected def isZIO1 = false
-
   override protected val code =
     s"""import zio._
        |import zio.stream._

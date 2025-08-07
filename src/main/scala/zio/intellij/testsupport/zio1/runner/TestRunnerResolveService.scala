@@ -52,7 +52,7 @@ private[testsupport] final class TestRunnerResolveService
     case _ =>
       val key = s"${version.toString}###${scalaVersion.versionStr}"
       if (state.resolvedVersions.containsKey(key)) {
-        val jarUrls = state.resolvedVersions.get(key).map(new URI(_).toURL)
+        val jarUrls = state.resolvedVersions.get(key).map(k => new URI(k).toURL)
         resolveClassPath(version, scalaVersion, jarUrls.toIndexedSeq) match {
           case r @ Right(_)                 => r
           case Left(_) if downloadIfMissing => downloadAndResolve(version, scalaVersion, progressListener)
